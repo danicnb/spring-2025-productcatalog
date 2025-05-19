@@ -5,6 +5,8 @@ import edu.uoc.epcsd.productcatalog.application.rest.request.CreateProductReques
 import edu.uoc.epcsd.productcatalog.application.rest.request.FindProductsByCriteria;
 import edu.uoc.epcsd.productcatalog.application.rest.response.GetProductResponse;
 import edu.uoc.epcsd.productcatalog.domain.Product;
+import edu.uoc.epcsd.productcatalog.domain.service.CategoryNotFoundException;
+import edu.uoc.epcsd.productcatalog.domain.service.ProductNotFoundException;
 import edu.uoc.epcsd.productcatalog.domain.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,10 +47,30 @@ public class ProductRESTController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // TODO: add the code for the missing system operations here: 
-    // use the corresponding mapping HTTP request annotation with the parameter: "/search"
-    // and call the method findProductsByCriteria(FindProductsByCriteria findProductsCriteria)
-    // which call the corresponding findProductsByExample method 
+    /**
+     * GET requests to search for products by optional criteria such as name and category ID.
+     *
+     * @param findProductsCriteria an object containing optional search filters (e.g. name, categoryId)
+     * @return a list of products matching the specified criteria
+     * @throws CategoryNotFoundException with status 400 if the product ID does not exist
+     */
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Product> findProductsByCriteria(@ModelAttribute FindProductsByCriteria findProductsCriteria) {
+        log.trace("findProductsByCriteria");
+
+        try {
+            Product product = new Product();
+            product.setName(findProductsCriteria.getName());
+            product.setCategoryId(findProductsCriteria.getCategoryId());
+
+            return productService.findProductsByExample(product);
+
+        } catch (IllegalArgumentException e) {
+            CategoryNotFoundException ce = new CategoryNotFoundException(findProductsCriteria.getCategoryId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ce.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Long> createProduct(@RequestBody @NotNull @Valid CreateProductRequest createProductRequest) {
@@ -77,9 +99,25 @@ public class ProductRESTController {
         }
     }
 
-    // TODO: add the code for the missing system operations here: 
-    // use the corresponding mapping HTTP request annotation with the parameter: "/{productId}"
-    // and call the method removeProduct(@PathVariable @NotNull Long productId)
-    // which call the corresponding deleteProduct method 
+    /**
+     * DELETE request to remove a product by ID
+     *
+     * @param productId the productId
+     * @return HTTP 204 No Content if successfully removed
+     * @throws ProductNotFoundException with status 400 if the product ID does not exist
+     */
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<GetProductResponse> removeProduct(@PathVariable @NotNull Long productId) {
+        log.trace("removeProduct");
 
+        log.trace("Deleting product " + productId);
+
+        productService.findProductById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        new ProductNotFoundException(productId).getMessage()));
+
+        productService.deleteProduct(productId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,0 +1,15 @@
+# Created at 2025-05-16T22:30:29.135
+WARNING: An illegal reflective access operation has occurred
+
+# Created at 2025-05-16T22:30:29.135
+WARNING: Illegal reflective access by nonapi.io.github.classgraph.classpath.CallStackReader (file:/C:/Users/Dani/.m2/repository/io/github/classgraph/classgraph/4.8.138/classgraph-4.8.138.jar) to method java.lang.SecurityManager.getClassContext()
+
+# Created at 2025-05-16T22:30:29.136
+WARNING: Please consider reporting this to the maintainers of nonapi.io.github.classgraph.classpath.CallStackReader
+
+# Created at 2025-05-16T22:30:29.136
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+
+# Created at 2025-05-16T22:30:29.137
+WARNING: All illegal access operations will be denied in a future release
+
