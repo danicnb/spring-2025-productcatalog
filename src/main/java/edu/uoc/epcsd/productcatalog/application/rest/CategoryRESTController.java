@@ -43,11 +43,12 @@ public class CategoryRESTController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // TODO: add the code for the missing system operations here: 
-    // use the corresponding mapping HTTP request annotation with the parameter: "/search"
-    // and call the method public ResponseEntity<List<Category>> findCategoriesByCriteria(@NotNull FindCategoriesByCriteria findCategoriesCriteria) 
-    // which call the corresponding categoryService method
-
+    /**
+     * GET request to search for categories using optional criteria such as name, description, or parent ID.
+     *
+     * @param findCategoriesCriteria an object containing optional search filters (e.g. name, description, parentId)
+     * @return a list of categories matching the specified criteria wrapped in a ResponseEntity with status 200 OK
+     */
     @GetMapping("/search")
     public ResponseEntity<List<Category>> findCategoriesByCriteria(@NotNull FindCategoriesByCriteria findCategoriesCriteria) {
         log.info("findCategoriesByCriteria");
